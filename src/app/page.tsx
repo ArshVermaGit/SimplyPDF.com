@@ -152,7 +152,7 @@ export default function Home() {
           >
             Every PDF Tool
             <br />
-            <span className="animate-text-shimmer">You'll Ever Need</span>
+            <span className="animate-text-shimmer">You&apos;ll Ever Need</span>
           </motion.h1>
 
           <motion.p
@@ -309,7 +309,7 @@ export default function Home() {
                 Join millions who trust SimplyPDF for their document needs.
               </p>
               <Link href="/merge-pdf" className="btn-primary text-lg px-12 py-5 inline-flex items-center gap-2">
-                Start Now — It's Free
+                Start Now — It&apos;s Free
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
