@@ -246,7 +246,7 @@ export default function WordToPDFPage() {
                                 <Loader2 className="w-10 h-10 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                             </div>
                             <h2 className="text-2xl font-bold mb-2">Converting to PDF...</h2>
-                            <p className="text-gray-500">This won't take long...</p>
+                            <p className="text-gray-500">This won&apos;t take long...</p>
                         </motion.div>
                     )}
 
