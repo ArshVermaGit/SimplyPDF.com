@@ -47,13 +47,23 @@ export default function RotatePDFPage() {
 
     const loadPages = async (pdfFile: File) => {
         setStatus("loading");
+        setErrorMessage("");
         try {
+            console.log("Loading pdfjs-dist...");
             const pdfjsLib = await import("pdfjs-dist");
-            pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+            const workerUrl = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
             const arrayBuffer = await pdfFile.arrayBuffer();
-            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const loadingTask = pdfjsLib.getDocument({
+                data: new Uint8Array(arrayBuffer),
+                useWorkerFetch: true,
+                isEvalSupported: false
+            });
+
+            const pdfDoc = await loadingTask.promise;
             const numPages = pdfDoc.numPages;
+            console.log(`${pdfFile.name} has ${numPages} pages`);
 
             const pageInfos: PageInfo[] = [];
             for (let i = 1; i <= numPages; i++) {
@@ -67,17 +77,20 @@ export default function RotatePDFPage() {
 
                 pageInfos.push({
                     pageNumber: i,
-                    image: canvas.toDataURL("image/jpeg", 0.6),
+                    image: canvas.toDataURL("image/jpeg", 0.7),
                     rotation: 0,
                     selected: true,
                 });
+
+                (page as any).cleanup?.();
             }
 
             setPages(pageInfos);
             setStatus("ready");
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("Failed to load PDF pages.");
+            await pdfDoc.destroy();
+        } catch (error: any) {
+            console.error("PDF loading error:", error);
+            setErrorMessage(`Failed to load PDF pages: ${error.message || "Unknown error"}`);
             setStatus("error");
         }
     };
@@ -219,8 +232,8 @@ export default function RotatePDFPage() {
                                             key={option.value}
                                             onClick={() => setGlobalRotation(option.value as 90 | 180 | 270)}
                                             className={`flex-1 min-w-32 p-4 rounded-xl border-2 text-center transition-all ${globalRotation === option.value
-                                                    ? "border-black bg-gray-50"
-                                                    : "border-gray-200 hover:border-gray-400"
+                                                ? "border-black bg-gray-50"
+                                                : "border-gray-200 hover:border-gray-400"
                                                 }`}
                                         >
                                             <div className="flex items-center justify-center gap-2 mb-1">
