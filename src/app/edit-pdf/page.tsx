@@ -7,6 +7,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, File, Download, Loader2, CheckCircle2, RefreshCw, AlertCircle, Type, Pencil, ArrowRight, ChevronLeft, ChevronRight, Trash2, Square, Circle, Image as ImageIcon, MousePointer2, Settings, Plus, Minus, Move } from "lucide-react";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { uint8ArrayToBlob } from "@/lib/pdf-utils";
+import {
+    AnimatedBackground,
+    FloatingDecorations,
+    ToolHeader,
+    ToolCard,
+    ProcessingState
+} from "@/components/ToolPageElements";
 
 type Tool = "text" | "draw" | "rectangle" | "circle" | "image" | "select";
 
@@ -396,34 +403,32 @@ export default function EditPDFPage() {
     const colors = ["#000000", "#EF4444", "#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "transparent"];
 
     return (
-        <div className="min-h-[calc(100vh-80px)] pt-20 bg-gray-50/50 flex flex-col">
+        <div className="relative min-h-[calc(100vh-80px)] pt-20 flex flex-col overflow-hidden">
+            <AnimatedBackground />
+            <FloatingDecorations />
+
             {/* Hidden Inputs */}
             <input type="file" ref={imageInputRef} accept="image/*" className="hidden" onChange={handleImageUpload} />
             <input id="file-input" type="file" accept=".pdf" className="hidden" onChange={handleFileChange} />
 
             <AnimatePresence mode="wait">
                 {status === "idle" && (
-                    <div className="container mx-auto px-4 py-12">
+                    <div className="container mx-auto px-4 py-12 relative z-10">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             className="max-w-4xl mx-auto"
                         >
-                            <div className="text-center mb-12">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
-                                    <Type className="w-8 h-8 text-black" />
-                                </div>
-                                <h1 className="text-4xl md:text-5xl font-bold mb-4">Edit & Annotate</h1>
-                                <p className="text-gray-500 text-lg max-w-xl mx-auto">
-                                    Professional tools to edit, draw, and enhance your PDFs in the browser.
-                                </p>
-                            </div>
+                            <ToolHeader
+                                title="Edit & Annotate"
+                                description="Professional tools to edit, draw, and enhance your PDFs in the browser."
+                                icon={Type}
+                            />
 
-                            <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-2xl shadow-black/5">
+                            <ToolCard className="p-8">
                                 <div
-                                    className={`relative flex flex-col items-center justify-center p-12 py-24 border-2 border-dashed rounded-2xl transition-all duration-300 cursor-pointer ${dragActive ? "border-black bg-gray-50/50" : "border-gray-200 hover:border-gray-400 hover:bg-gray-50/30"
-                                        }`}
+                                    className={`drop-zone active:border-black ${dragActive ? "active" : ""}`}
                                     onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
                                     onDragLeave={() => setDragActive(false)}
                                     onDrop={handleDrop}
@@ -433,7 +438,7 @@ export default function EditPDFPage() {
                                     <p className="text-xl font-semibold mb-2">Drop your PDF here</p>
                                     <p className="text-gray-400">or click to browse from your computer</p>
                                 </div>
-                            </div>
+                            </ToolCard>
                         </motion.div>
                     </div>
                 )}
@@ -443,7 +448,7 @@ export default function EditPDFPage() {
                         key="editing"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="flex-1 flex overflow-hidden"
+                        className="flex-1 flex overflow-hidden relative z-10"
                     >
                         {/* LEFT: Floating Toolbar */}
                         <div className="w-20 flex flex-col border-r border-gray-200 bg-white py-6 items-center gap-4 z-10 shrink-0">
@@ -779,19 +784,10 @@ export default function EditPDFPage() {
                 )}
 
                 {status === "processing" && (
-                    <motion.div
-                        key="processing"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col items-center justify-center py-32 max-w-lg mx-auto text-center"
-                    >
-                        <div className="relative mb-8">
-                            <div className="w-24 h-24 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
-                            <Loader2 className="w-10 h-10 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                        </div>
-                        <h2 className="text-2xl font-bold mb-2">Applying edits...</h2>
-                        <p className="text-gray-500">This won&apos;t take long...</p>
-                    </motion.div>
+                    <ProcessingState
+                        message="Applying edits..."
+                        description="This won't take long..."
+                    />
                 )}
 
                 {status === "success" && (
