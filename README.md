@@ -5,7 +5,7 @@
 ### *The Ultimate Premium Suite for Your PDF Needs*
 
 [![Website](https://img.shields.io/badge/🌐_Live_Demo-simplypdf.vercel.app-000000?style=for-the-badge&labelColor=5B21B6)](https://simplypdf.vercel.app)
-[![GitHub](https://img.shields.io/badge/GitHub-ArshVermaGit-181717?style=for-the-badge&logo=github)](https://github.com/ArshVermaGit)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Arsh_Verma-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/arshvermadev/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 ---
@@ -28,14 +28,13 @@ SimplyPDF isn't just a tool; it's a **premium experience**. Featuring **Animated
 
 <div align="center">
 
-| 🏠 **Landing Page** | 🖼️ **PDF to JPG** |
-|:---:|:---:|
-| ![Homepage](public/screenshots/homepage.png) | ![Merge PDF](public/screenshots/merge.png) |
+| 🏠 **Landing Page** |
+|:---:|
+| ![Homepage](public/screenshots/homepage.png) |
 
-| 🔍 **Features Overview** | 🎨 **Premium Design** |
+| 🔍 **Features Overview** | 🖼️ **PDF to JPG** |
 |:---:|:---:|
-| ![Features](public/screenshots/features.png) | ![UI/UX](https://img.shields.io/badge/UI/UX-Premium_Experience-black?style=for-the-badge&logo=figma&logoColor=white) |
-
+| ![Features](public/screenshots/features.png) | ![Merge PDF](public/screenshots/merge.png) |
 </div>
 
 ---
@@ -141,7 +140,7 @@ Open `http://localhost:3000` to start using SimplyPDF locally!
 
 ### Modern Interface with Premium Animations
 
-![Features Showcase](public/screenshots/features.png)
+![Features Showcase](public/screenshots/homepage.png)
 
 *Experience smooth transitions, floating elements, and an intuitive drag-and-drop interface*
 
