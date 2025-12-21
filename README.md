@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="public/logo.svg" alt="SimplyPDF Logo" width="120" height="120" />
-
 # 📄 SimplyPDF
 
 ### *The Ultimate Premium Suite for Your PDF Needs*
