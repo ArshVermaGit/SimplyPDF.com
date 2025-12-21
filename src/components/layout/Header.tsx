@@ -133,6 +133,9 @@ export default function Header() {
             <Link href="/compress-pdf" className="font-medium text-gray-700 hover:text-black transition-colors underline-hover">
               Compress
             </Link>
+            <Link href="/about" className="font-medium text-gray-700 hover:text-black transition-colors underline-hover">
+              About
+            </Link>
           </div>
 
           {/* Auth Section */}
