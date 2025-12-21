@@ -8,6 +8,13 @@ import { Upload, File, X, Download, Loader2, CheckCircle2, RefreshCw, AlertCircl
 import { PDFDocument, degrees } from "pdf-lib";
 import { uint8ArrayToBlob } from "@/lib/pdf-utils";
 import { PDFPreviewModal } from "@/components/PDFPreviewModal";
+import {
+    AnimatedBackground,
+    FloatingDecorations,
+    ToolHeader,
+    ToolCard,
+    ProcessingState
+} from "@/components/ToolPageElements";
 
 interface PageInfo {
     id: string;
@@ -357,8 +364,11 @@ export default function MergePDFPage() {
     const totalPages = files.reduce((acc, f) => acc + f.pages.length, 0);
 
     return (
-        <div className="min-h-[calc(100vh-80px)] pt-24 pb-16">
-            <div className="container mx-auto px-4">
+        <div className="relative min-h-[calc(100vh-80px)] pt-24 pb-16 overflow-hidden">
+            <AnimatedBackground />
+            <FloatingDecorations />
+
+            <div className="container mx-auto px-4 relative z-10">
                 <AnimatePresence mode="wait">
                     {status === "idle" && (
                         <motion.div
@@ -368,20 +378,15 @@ export default function MergePDFPage() {
                             exit={{ opacity: 0, y: -20 }}
                             className="max-w-4xl mx-auto"
                         >
-                            <div className="text-center mb-12">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-2xl mb-6">
-                                    <Combine className="w-8 h-8" />
-                                </div>
-                                <h1 className="text-4xl md:text-5xl font-bold mb-4">Merge PDF</h1>
-                                <p className="text-gray-500 text-lg max-w-xl mx-auto">
-                                    Combine multiple PDFs into one. Rearrange, rotate, or delete pages before merging.
-                                </p>
-                            </div>
+                            <ToolHeader
+                                title="Merge PDF"
+                                description="Combine multiple PDFs into one. Rearrange, rotate, or delete pages before merging."
+                                icon={Combine}
+                            />
 
-                            <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-xl">
+                            <ToolCard className="p-8">
                                 <div
-                                    className={`relative flex flex-col items-center justify-center p-12 py-20 border-2 border-dashed rounded-2xl transition-all duration-300 cursor-pointer ${dragActive ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-400"
-                                        }`}
+                                    className={`drop-zone active:border-black ${dragActive ? "active" : ""}`}
                                     onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
                                     onDragLeave={() => setDragActive(false)}
                                     onDrop={handleDrop}
@@ -399,24 +404,15 @@ export default function MergePDFPage() {
                                     <p className="text-lg font-medium mb-2">Drop your PDFs here</p>
                                     <p className="text-gray-400 text-sm">or click to browse • Multiple files supported</p>
                                 </div>
-                            </div>
+                            </ToolCard>
                         </motion.div>
                     )}
 
-                    {status === "loading" && (
-                        <motion.div
-                            key="loading"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col items-center justify-center py-32 max-w-lg mx-auto text-center"
-                        >
-                            <div className="relative mb-8">
-                                <div className="w-24 h-24 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
-                                <Loader2 className="w-10 h-10 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                            </div>
-                            <h2 className="text-2xl font-bold mb-2">Loading PDFs...</h2>
-                            <p className="text-gray-500">Generating page previews...</p>
-                        </motion.div>
+                    {(status === "loading") && (
+                        <ProcessingState
+                            message="Loading PDFs..."
+                            description="Generating page previews..."
+                        />
                     )}
 
                     {status === "ready" && (
@@ -728,19 +724,10 @@ export default function MergePDFPage() {
                     )}
 
                     {status === "processing" && (
-                        <motion.div
-                            key="processing"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex flex-col items-center justify-center py-32 max-w-lg mx-auto text-center"
-                        >
-                            <div className="relative mb-8">
-                                <div className="w-24 h-24 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
-                                <Loader2 className="w-10 h-10 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                            </div>
-                            <h2 className="text-2xl font-bold mb-2">Merging your PDFs...</h2>
-                            <p className="text-gray-500">This won&apos;t take long...</p>
-                        </motion.div>
+                        <ProcessingState
+                            message="Merging your PDFs..."
+                            description="This won't take long..."
+                        />
                     )}
 
                     {status === "success" && (
