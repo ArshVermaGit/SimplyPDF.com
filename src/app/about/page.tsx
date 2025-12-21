@@ -131,7 +131,7 @@ export default function AboutPage() {
                             engaging digital reality.
                         </p>
 
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-col sm:flex-row gap-4">
                             <Link
                                 href="https://arshcreates.vercel.app/"
                                 target="_blank"
