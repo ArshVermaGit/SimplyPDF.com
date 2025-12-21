@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Loader2, CheckCircle2, Download, RefreshCw, AlertCircle, ArrowRight, Sparkles } from "lucide-react";
 import { FileUploader } from "./FileUploader";
 import { downloadFile } from "@/lib/pdf-utils";
+import {
+    AnimatedBackground,
+    FloatingDecorations,
+    ToolHeader,
+    ToolCard,
+    ProcessingState
+} from "./ToolPageElements";
 
 interface ToolPageLayoutProps {
     title: string;
@@ -21,49 +28,12 @@ interface ToolPageLayoutProps {
     onProcess: (files: File[]) => Promise<Blob | null>;
 }
 
-// Floating decoration component
-const FloatingShape = ({ className, delay = 0 }: { className: string; delay?: number }) => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{
-            opacity: 1,
-            scale: 1,
-            y: [0, -20, 0],
-        }}
-        transition={{
-            opacity: { duration: 0.5, delay },
-            scale: { duration: 0.5, delay },
-            y: { duration: 6, repeat: Infinity, ease: "easeInOut", delay }
-        }}
-        className={className}
-    />
-);
-
-// Animated grid pattern
-const GridPattern = () => (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-50" />
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            transition={{ duration: 1 }}
-            className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-gray-100 to-transparent rounded-full blur-3xl"
-        />
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.2 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-gray-50 to-transparent rounded-full blur-3xl"
-        />
-    </div>
-);
-
 // Success particles animation
 const SuccessParticles = () => {
     const particles = Array.from({ length: 12 }, (_, i) => i);
 
     return (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-50">
             {particles.map((i) => (
                 <motion.div
                     key={i}
@@ -172,28 +142,11 @@ export function ToolPageLayout({
     };
 
     return (
-        <div className="min-h-[calc(100vh-80px)] pt-24 pb-16 relative overflow-hidden">
-            <GridPattern />
+        <div className="relative min-h-[calc(100vh-80px)] pt-24 pb-16 overflow-hidden">
+            <AnimatedBackground />
+            <FloatingDecorations />
 
-            {/* Floating decorations */}
-            <FloatingShape
-                className="absolute top-32 right-[10%] w-20 h-20 border-2 border-gray-200 rounded-full opacity-40"
-                delay={0}
-            />
-            <FloatingShape
-                className="absolute top-48 left-[5%] w-12 h-12 bg-gray-100 rounded-2xl rotate-12 opacity-60"
-                delay={0.2}
-            />
-            <FloatingShape
-                className="absolute bottom-32 right-[15%] w-16 h-16 bg-gray-50 rounded-full opacity-50"
-                delay={0.4}
-            />
-            <FloatingShape
-                className="absolute bottom-48 left-[10%] w-24 h-24 border border-gray-100 rounded-3xl -rotate-6 opacity-30"
-                delay={0.6}
-            />
-
-            <div className="container mx-auto px-4 relative">
+            <div className="container mx-auto px-4 relative z-10">
                 <AnimatePresence mode="wait">
                     {status === "idle" && (
                         <motion.div
@@ -205,31 +158,18 @@ export function ToolPageLayout({
                             className="max-w-4xl mx-auto"
                         >
                             {/* Header */}
-                            <motion.div variants={itemVariants} className="text-center mb-12">
-                                {icon && (
-                                    <motion.div
-                                        className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl mb-6 shadow-lg shadow-gray-200/50"
-                                        whileHover={{ scale: 1.1, rotate: 5 }}
-                                        transition={{ type: "spring", stiffness: 400 }}
-                                    >
-                                        {icon}
-                                    </motion.div>
-                                )}
-                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
-                                    {title}
-                                </h1>
-                                <p className="text-gray-500 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
-                                    {description}
-                                </p>
-                            </motion.div>
+                            <ToolHeader
+                                title={title}
+                                description={description}
+                                icon={icon}
+                            />
 
                             {/* File Uploader Card */}
                             <motion.div
                                 variants={itemVariants}
                                 className="relative"
                             >
-                                <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-[2rem] blur-xl opacity-50" />
-                                <div className="relative bg-white rounded-3xl border border-gray-200/80 p-8 md:p-10 shadow-2xl shadow-gray-200/50">
+                                <ToolCard className="p-8 md:p-10">
                                     <FileUploader
                                         files={files}
                                         onFilesChange={handleFilesChange}
@@ -258,7 +198,7 @@ export function ToolPageLayout({
                                             </motion.button>
                                         </motion.div>
                                     )}
-                                </div>
+                                </ToolCard>
                             </motion.div>
 
                             {/* Features */}
@@ -286,56 +226,10 @@ export function ToolPageLayout({
                     )}
 
                     {status === "processing" && (
-                        <motion.div
-                            key="processing"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.1 }}
-                            className="flex flex-col items-center justify-center py-32 max-w-lg mx-auto text-center"
-                        >
-                            <div className="relative mb-10">
-                                {/* Outer ring */}
-                                <motion.div
-                                    className="w-32 h-32 rounded-full border-[3px] border-gray-200"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                />
-                                {/* Inner spinning ring */}
-                                <motion.div
-                                    className="absolute inset-2 rounded-full border-[3px] border-transparent border-t-black"
-                                    animate={{ rotate: -360 }}
-                                    transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                                />
-                                {/* Center icon */}
-                                <motion.div
-                                    className="absolute inset-0 flex items-center justify-center"
-                                    animate={{ scale: [1, 1.1, 1] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                >
-                                    <Loader2 className="w-10 h-10 text-black" />
-                                </motion.div>
-                            </div>
-                            <motion.h2
-                                className="text-2xl md:text-3xl font-bold mb-3"
-                                animate={{ opacity: [1, 0.7, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                {processingText}
-                            </motion.h2>
-                            <p className="text-gray-500">This won&apos;t take long...</p>
-
-                            {/* Progress dots */}
-                            <div className="flex gap-2 mt-8">
-                                {[0, 1, 2].map((i) => (
-                                    <motion.div
-                                        key={i}
-                                        className="w-2 h-2 bg-black rounded-full"
-                                        animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
-                                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-                                    />
-                                ))}
-                            </div>
-                        </motion.div>
+                        <ProcessingState
+                            title={processingText}
+                            description="This won't take long..."
+                        />
                     )}
 
                     {status === "success" && (
