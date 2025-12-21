@@ -88,12 +88,12 @@ export function ToolPageBackground({ children, className = "" }: ToolPageBackgro
 
 // Page header component
 interface ToolHeaderProps {
-    icon?: ReactNode;
+    icon?: any;
     title: string;
     description: string;
 }
 
-export function ToolHeader({ icon, title, description }: ToolHeaderProps) {
+export function ToolHeader({ icon: Icon, title, description }: ToolHeaderProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -101,13 +101,17 @@ export function ToolHeader({ icon, title, description }: ToolHeaderProps) {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
         >
-            {icon && (
+            {Icon && (
                 <motion.div
                     className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl mb-6 shadow-lg shadow-gray-200/50"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 400 }}
                 >
-                    {icon}
+                    {typeof Icon === 'function' || (typeof Icon === 'object' && (Icon.$$typeof || Icon.render)) ? (
+                        <Icon className="w-10 h-10" />
+                    ) : (
+                        Icon
+                    )}
                 </motion.div>
             )}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
@@ -174,11 +178,14 @@ export function FeatureGrid() {
 
 // Processing state component
 interface ProcessingStateProps {
-    text: string;
+    title?: string;
+    message?: string; // for backward compatibility
+    description?: string;
     progress?: number;
 }
 
-export function ProcessingState({ text, progress }: ProcessingStateProps) {
+export function ProcessingState({ title, message, description, progress }: ProcessingStateProps) {
+    const displayTitle = title || message || "Processing...";
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -202,8 +209,14 @@ export function ProcessingState({ text, progress }: ProcessingStateProps) {
                 animate={{ opacity: [1, 0.7, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
             >
-                {text}
+                {displayTitle}
             </motion.h2>
+
+            {description && (
+                <p className="text-gray-500 mb-6 max-w-sm">
+                    {description}
+                </p>
+            )}
 
             {progress !== undefined && (
                 <>
