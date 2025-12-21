@@ -14,6 +14,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "SimplyPDF | The Easiest PDF Tool",
   description: "Merge, split, compress, and convert PDFs with SimplyPDF. The premium, fast, and secure PDF management tool.",
+  other: {
+    "google-adsense-account": "ca-pub-4266443141083729",
+  },
 };
 
 export default function RootLayout({
