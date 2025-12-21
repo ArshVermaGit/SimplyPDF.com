@@ -34,9 +34,9 @@ const resources = [
 ];
 
 const socials = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Twitter, href: "https://x.com/TheArshVerma", label: "Twitter" },
+    { icon: Github, href: "https://github.com/ArshVermaGit", label: "GitHub" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/arshvermadev/", label: "LinkedIn" },
 ];
 
 export default function Footer() {
