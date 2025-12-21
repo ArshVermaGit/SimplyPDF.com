@@ -46,21 +46,26 @@ export default function OrganizePDFPage() {
 
     const loadPages = async (pdfFile: File) => {
         setStatus("loading");
+        setErrorMessage("");
         try {
-            // Load PDF for page count
-            const arrayBuffer = await pdfFile.arrayBuffer();
-            const pdf = await PDFDocument.load(arrayBuffer);
-            const pageCount = pdf.getPageCount();
-
-            // Generate page previews using pdfjs-dist
+            console.log("Loading pdfjs-dist...");
             const pdfjsLib = await import("pdfjs-dist");
-            pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+            const workerUrl = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
-            const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const arrayBuffer = await pdfFile.arrayBuffer();
+            const loadingTask = pdfjsLib.getDocument({
+                data: new Uint8Array(arrayBuffer),
+                useWorkerFetch: true,
+                isEvalSupported: false
+            });
+
+            const pdfDoc = await loadingTask.promise;
+            const pageCount = pdfDoc.numPages;
 
             const pageInfos: PageInfo[] = [];
-            for (let i = 0; i < pageCount; i++) {
-                const page = await pdfDoc.getPage(i + 1);
+            for (let i = 1; i <= pageCount; i++) {
+                const page = await pdfDoc.getPage(i);
                 const viewport = page.getViewport({ scale: 0.5 });
                 const canvas = document.createElement("canvas");
                 const context = canvas.getContext("2d")!;
@@ -69,18 +74,21 @@ export default function OrganizePDFPage() {
                 await page.render({ canvasContext: context, viewport } as any).promise;
 
                 pageInfos.push({
-                    id: `page-${i}`,
-                    pageNumber: i + 1,
+                    id: `page-${i - 1}`,
+                    pageNumber: i,
                     selected: true,
-                    image: canvas.toDataURL("image/jpeg", 0.6),
+                    image: canvas.toDataURL("image/jpeg", 0.7),
                 });
+
+                (page as any).cleanup?.();
             }
 
             setPages(pageInfos);
             setStatus("ready");
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("Failed to load PDF. The file may be corrupted.");
+            await pdfDoc.destroy();
+        } catch (error: any) {
+            console.error("PDF loading error:", error);
+            setErrorMessage(`Failed to load PDF: ${error.message || "Unknown error"}`);
             setStatus("error");
         }
     };
@@ -273,8 +281,8 @@ export default function OrganizePDFPage() {
                                             {/* Thumbnail */}
                                             <div
                                                 className={`relative overflow-hidden rounded-xl border-2 transition-all ${page.selected
-                                                        ? "border-black shadow-lg"
-                                                        : "border-gray-200 opacity-50"
+                                                    ? "border-black shadow-lg"
+                                                    : "border-gray-200 opacity-50"
                                                     }`}
                                             >
                                                 {/* Drag Handle */}
@@ -316,8 +324,8 @@ export default function OrganizePDFPage() {
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); togglePage(page.id); }}
                                                     className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${page.selected
-                                                            ? "bg-black border-black text-white"
-                                                            : "bg-white border-gray-300 hover:border-black"
+                                                        ? "bg-black border-black text-white"
+                                                        : "bg-white border-gray-300 hover:border-black"
                                                         }`}
                                                 >
                                                     {page.selected && <Check className="w-3 h-3" />}
