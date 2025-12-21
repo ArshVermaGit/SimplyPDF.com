@@ -47,16 +47,24 @@ export default function SignPDFPage() {
 
     const loadPdfPreview = async (pdfFile: File) => {
         try {
+            console.log("Loading pdfjs-dist...");
             const pdfjsLib = await import("pdfjs-dist");
-            pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+            const workerUrl = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
             const arrayBuffer = await pdfFile.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            setTotalPages(pdf.numPages);
+            const loadingTask = pdfjsLib.getDocument({
+                data: new Uint8Array(arrayBuffer),
+                useWorkerFetch: true,
+                isEvalSupported: false
+            });
+
+            const pdfDoc = await loadingTask.promise;
+            setTotalPages(pdfDoc.numPages);
 
             const images: string[] = [];
-            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
-                const page = await pdf.getPage(i);
+            for (let i = 1; i <= Math.min(pdfDoc.numPages, 10); i++) {
+                const page = await pdfDoc.getPage(i);
                 const viewport = page.getViewport({ scale: 1 });
                 const canvas = document.createElement("canvas");
                 const context = canvas.getContext("2d")!;
@@ -64,9 +72,11 @@ export default function SignPDFPage() {
                 canvas.width = viewport.width;
                 await page.render({ canvasContext: context, viewport } as any).promise;
                 images.push(canvas.toDataURL("image/jpeg", 0.5));
+                (page as any).cleanup?.();
             }
             setPageImages(images);
             setStatus("signing");
+            await pdfDoc.destroy();
         } catch (error) {
             console.error(error);
             setErrorMessage("Failed to load PDF preview");
