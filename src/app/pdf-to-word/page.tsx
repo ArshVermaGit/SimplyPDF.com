@@ -13,8 +13,10 @@ import {
     ToolCard,
     ProcessingState
 } from "@/components/ToolPageElements";
+import { useHistory } from "@/context/HistoryContext";
 
 export default function PDFToWordPage() {
+    const { addToHistory } = useHistory();
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
     const [resultBlob, setResultBlob] = useState<Blob | null>(null);
@@ -116,6 +118,11 @@ export default function PDFToWordPage() {
             const buffer = await docx.Packer.toBlob(doc);
             setResultBlob(buffer);
             setStatus("success");
+
+            if (file) {
+                addToHistory("PDF to Word", file.name, "Converted to Word");
+            }
+
             await pdfDoc.destroy();
         } catch (error: any) {
             console.error(error);
