@@ -32,7 +32,7 @@ SimplyPDF isn't just a tool; it's a **premium experience**. Featuring **Animated
 |:---:|
 | ![Homepage](public/screenshots/homepage.png) |
 
-| 🔍 **Features Overview** | 🖼️ **PDF to JPG** |
+| 🔍 **Features Overview** | 🖼️ **Merge PDFs** |
 |:---:|:---:|
 | ![Features](public/screenshots/features.png) | ![Merge PDF](public/screenshots/merge.png) |
 </div>
