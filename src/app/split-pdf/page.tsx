@@ -14,6 +14,7 @@ import {
     ToolCard,
     ProcessingState
 } from "@/components/ToolPageElements";
+import { EducationalContent } from "@/components/EducationalContent";
 import { useHistory } from "@/context/HistoryContext";
 
 type SplitMode = "all" | "range" | "select" | "fixed_range" | "size_limit" | "manual";
@@ -716,6 +717,40 @@ export default function SplitPDFPage() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                <EducationalContent
+                    howItWorks={{
+                        title: "How to Split PDF Files",
+                        steps: [
+                            "Upload your PDF and wait for our visual page generator to load your document.",
+                            "Choose your split mode: extract all pages, select specific pages, or set page ranges.",
+                            "Review your split files and download them as a single ZIP archive or individually."
+                        ]
+                    }}
+                    benefits={{
+                        title: "Professional PDF Splitting",
+                        items: [
+                            { title: "Visual Selection", desc: "Select the pages you want to extract by clicking on high-quality page previews." },
+                            { title: "Multiple Modes", desc: "Split by ranges, every X pages, or by file size. We have a mode for every workflow." },
+                            { title: "ZIP Downloads", desc: "Large split jobs are automatically bundled into a clean ZIP file for easy management." },
+                            { title: "Zero Data Risk", desc: "Your files never leave your device. All splitting happens locally in your browser." }
+                        ]
+                    }}
+                    faqs={[
+                        {
+                            question: "Can I split a PDF into individual pages?",
+                            answer: "Yes! Use the 'All Pages' mode to extract every single page of your PDF into its own separate document."
+                        },
+                        {
+                            question: "Can I extract only specific pages?",
+                            answer: "Absolutely. Use the 'Select' mode and simply click on the thumbnails of the pages you want to keep. We'll merge them into a new PDF for you."
+                        },
+                        {
+                            question: "Is there a page limit for splitting?",
+                            answer: "There's no page limit, but documents with hundreds of pages may take longer to generate previews depending on your device's speed."
+                        }
+                    ]}
+                />
             </div>
 
             {/* Preview Modal */}
