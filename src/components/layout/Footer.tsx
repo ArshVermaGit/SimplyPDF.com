@@ -28,9 +28,10 @@ const tools = [
 
 const resources = [
     { title: "About", href: "/about" },
-    { title: "Privacy", href: "#" },
-    { title: "Terms", href: "#" },
-    { title: "Contact", href: "#" },
+    { title: "Privacy", href: "/privacy" },
+    { title: "Terms", href: "/terms" },
+    { title: "Contact", href: "/contact" },
+    { title: "FAQ", href: "/faq" },
 ];
 
 const socials = [
