@@ -14,6 +14,7 @@ import {
     ToolCard,
     ProcessingState
 } from "@/components/ToolPageElements";
+import { useHistory } from "@/context/HistoryContext";
 
 interface PageInfo {
     pageNumber: number;
@@ -23,6 +24,7 @@ interface PageInfo {
 }
 
 export default function RotatePDFPage() {
+    const { addToHistory } = useHistory();
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<"idle" | "loading" | "ready" | "processing" | "success" | "error">("idle");
     const [resultBlob, setResultBlob] = useState<Blob | null>(null);
@@ -117,6 +119,10 @@ export default function RotatePDFPage() {
             const pdfBytes = await rotatePDF(file, globalRotation);
             setResultBlob(uint8ArrayToBlob(pdfBytes));
             setStatus("success");
+
+            if (file) {
+                addToHistory("Rotated PDF", file.name, `All pages rotated ${globalRotation}°`);
+            }
         } catch (error) {
             console.error(error);
             setErrorMessage(error instanceof Error ? error.message : "Failed to rotate PDF");
