@@ -54,10 +54,10 @@ const features = [
 ];
 
 const stats = [
-  { value: "10M+", label: "Files Processed" },
-  { value: "99.9%", label: "Uptime" },
+  { value: "Secure", label: "Local Processing" },
+  { value: "Fast", label: "Optimized Engine" },
   { value: "0", label: "Data Stored" },
-  { value: "∞", label: "Free Forever" },
+  { value: "Free", label: "Accessibility" },
 ];
 
 export default function Home() {
