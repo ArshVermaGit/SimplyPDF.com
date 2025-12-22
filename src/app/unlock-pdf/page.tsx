@@ -12,8 +12,10 @@ import {
     ToolCard,
     ProcessingState
 } from "@/components/ToolPageElements";
+import { useHistory } from "@/context/HistoryContext";
 
 export default function UnlockPDFPage() {
+    const { addToHistory } = useHistory();
     const [file, setFile] = useState<File | null>(null);
     const [password, setPassword] = useState("");
     const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
@@ -58,6 +60,10 @@ export default function UnlockPDFPage() {
             const pdfBytes = await newPdf.save();
             setResultBlob(uint8ArrayToBlob(pdfBytes));
             setStatus("success");
+
+            if (file) {
+                addToHistory("Unlocked PDF", file.name, "Password protection removed");
+            }
         } catch (error) {
             console.error(error);
             if (error instanceof Error && error.message.includes("password")) {
