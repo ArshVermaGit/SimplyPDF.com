@@ -15,8 +15,10 @@ import {
     ToolCard,
     ProcessingState
 } from "@/components/ToolPageElements";
+import { useHistory } from "@/context/HistoryContext";
 
 export default function WatermarkPDFPage() {
+    const { addToHistory } = useHistory();
     const [file, setFile] = useState<File | null>(null);
     const [watermarkText, setWatermarkText] = useState("CONFIDENTIAL");
     const [opacity, setOpacity] = useState(30);
@@ -118,6 +120,10 @@ export default function WatermarkPDFPage() {
             const pdfBytes = await pdf.save();
             setResultBlob(uint8ArrayToBlob(pdfBytes));
             setStatus("success");
+
+            if (file) {
+                addToHistory("Watermarked PDF", file.name, "Text watermark added to all pages");
+            }
         } catch (error) {
             console.error(error);
             setErrorMessage("Failed to add watermark.");
